@@ -1,5 +1,8 @@
 📚 GCTU Smart Student Chatbot – AI-Powered Assistant
-This is an AI-powered chatbot designed to assist students of Ghana Communication Technology University (GCTU) by answering questions based on official university documents like the academic calendar, undergraduate handbook, and relevant website pages.
+
+This is an AI-powered chatbot designed to assist students of Ghana Communication Technology University (GCTU) by answering questions 
+
+based on official university documents like the academic calendar, undergraduate handbook, and relevant website pages.
 
 
 
