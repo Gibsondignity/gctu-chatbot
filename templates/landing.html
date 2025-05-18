@@ -1,0 +1,129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GCTU Chatbot</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes float {
+      0% {
+        transform: translatey(0px);
+      }
+      50% {
+        transform: translatey(-15px);
+      }
+      100% {
+        transform: translatey(0px);
+      }
+    }
+
+    .fade-in-up {
+      animation: fadeInUp 1s ease-out;
+    }
+
+    .float {
+      animation: float 4s ease-in-out infinite;
+    }
+  </style>
+</head>
+{% comment %} <body class="bg-gradient-to-br from-purple-700 via-indigo-800 to-blue-900 min-h-screen text-white font-sans flex flex-col justify-between">
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between fade-in-up">
+    <div class="md:w-1/2 text-center md:text-left">
+      <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">Welcome to GCTU Smart Chatbot</h1>
+      <p class="text-lg mb-8">Ask anything about Ghana Communication Technology University (GCTU) — admissions, courses, schedules, fees, and more.</p>
+      <a href="{% url 'login' %}" class="inline-block bg-white text-blue-800 font-semibold px-6 py-3 rounded-full shadow hover:bg-blue-100 transition-all duration-300 ease-in-out">Login to Chat</a>
+    </div>
+    <div class="md:w-1/2 mt-10 md:mt-0">
+      <img src="https://i.ibb.co/273H21wy/images.png" alt="Chatbot Illustration" class="w-full max-w-md mx-auto float">
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center text-gray-300 text-sm py-4">
+    &copy; {{ now|date:"Y" }} Ghana Communication Technology University. All rights reserved.
+  </footer>
+
+</body> {% endcomment %}
+
+
+
+
+<body class="bg-gradient-to-br from-purple-700 via-indigo-800 to-blue-900 min-h-screen text-white font-sans flex flex-col justify-between">
+
+  {% include 'header.html' %}
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between fade-in-up">
+    <div class="md:w-1/2 text-center md:text-left">
+      <h1 id="typed-text" class="text-4xl md:text-5xl font-bold mb-6 leading-tight h-[4rem]"></h1>
+      <p class="text-lg mb-8">Built for Students of Ghana Communication Technology University. Get instant answers and support!</p>
+      <a href="{% url 'login' %}" class="inline-block bg-white text-blue-800 font-semibold px-6 py-3 rounded-full shadow hover:bg-blue-100 transition-all duration-300 ease-in-out">Login to Chat</a>
+    </div>
+    <div class="md:w-1/2 mt-10 md:mt-0">
+      <img src="https://i.ibb.co/273H21wy/images.png" alt="Chatbot Illustration" class="w-full max-w-md mx-auto float">
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center text-gray-300 text-sm py-4">
+    &copy; {{ now|date:"Y" }} Ghana Communication Technology University. All rights reserved.
+  </footer>
+
+  <!-- Include the typing script here -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const phrases = [
+        "Welcome to GCTU Smart Chatbot",
+        "Ask Anything About GCTU",
+        "Admissions, Fees, Courses & More",
+        "We're Here to Help You 24/7"
+      ];
+      
+      const el = document.getElementById("typed-text");
+      let currentPhrase = 0;
+      let currentChar = 0;
+      let isDeleting = false;
+  
+      function type() {
+        const phrase = phrases[currentPhrase];
+        if (isDeleting) {
+          el.textContent = phrase.substring(0, currentChar--);
+        } else {
+          el.textContent = phrase.substring(0, currentChar++);
+        }
+  
+        if (!isDeleting && currentChar === phrase.length) {
+          isDeleting = true;
+          setTimeout(type, 2000); // Wait before deleting
+        } else if (isDeleting && currentChar === 0) {
+          isDeleting = false;
+          currentPhrase = (currentPhrase + 1) % phrases.length;
+          setTimeout(type, 500);
+        } else {
+          setTimeout(type, isDeleting ? 50 : 100);
+        }
+      }
+  
+      type();
+    });
+  </script>
+  
+</body>
+
+
+</html>
