@@ -8,12 +8,19 @@ based on official university documents like the academic calendar, undergraduate
 
 ✅ Features
 💬 Ask GCTU-specific questions (e.g., "When does the semester start?")
+
 🧠 Context-aware answers using embedded university documents
+
 📄 Load and parse PDFs (e.g., handbook, calendar)
+
 🌐 Read content from GCTU website pages
+
 🔍 Semantic search using ChromaDB
+
 ⚡ Uses free, fast LLM via Groq API (Mixtral, LLaMA3)
+
 🧠 Embedding model: sentence-transformers/all-MiniLM-L6-v2
+
 
 
 
