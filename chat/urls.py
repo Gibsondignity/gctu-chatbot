@@ -1,5 +1,8 @@
 from django.urls import path, include
-from .views import *
+from .views import (
+    landing, index, register_view, response, login_view,
+    fetch_chats, get_conversations
+)
 
 urlpatterns = [
     path('', landing, name='landing'),
@@ -8,5 +11,6 @@ urlpatterns = [
     path('response', response, name='response'),
     path('login', login_view, name='login'),
     path('fetch-chats', fetch_chats, name='fetch_chats'),
+    path('get-conversations', get_conversations, name='get_conversations'),
 ]
 
