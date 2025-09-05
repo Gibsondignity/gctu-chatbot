@@ -134,4 +134,3 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-GROQ_API_KEY = "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"
