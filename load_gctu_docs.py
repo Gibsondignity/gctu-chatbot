@@ -25,9 +25,23 @@ def extract_text_from_url(url):
         return ""
 
 # === Preprocess and Chunk ===
-def preprocess_text(text, chunk_size=500):
-    cleaned = ' '.join(text.split())
-    return [cleaned[i:i+chunk_size] for i in range(0, len(cleaned), chunk_size)]
+def preprocess_text(text, chunk_size=600, overlap=100):
+    import re
+    # Enhanced cleaning: normalize whitespace, remove extra spaces, handle unicode
+    cleaned = re.sub(r'\s+', ' ', text.strip())
+    # Remove non-printable characters
+    cleaned = ''.join(c for c in cleaned if c.isprintable())
+    chunks = []
+    start = 0
+    while start < len(cleaned):
+        end = start + chunk_size
+        chunk = cleaned[start:end]
+        if len(chunk.strip()) > 50:  # Only add chunks with meaningful content
+            chunks.append(chunk)
+        start = end - overlap  # Overlap for better context
+        if start >= len(cleaned):
+            break
+    return chunks
 
 # === Embed and Store ===
 def embed_and_store(chunks, collection):
@@ -59,28 +73,34 @@ def main():
             embed_and_store(chunks, collection)
 
 
-    # === Load URLs ===
+    # === Load URLs (Focused on IT Department) ===
     urls = [
-        "https://site.gctu.edu.gh/undergraduate-programmes/",
-        "https://site.gctu.edu.gh/undergraduate-programmes"
-        "https://site.gctu.edu.gh/academic-calendar/",
-        "https://site.gctu.edu.gh/",
-        "https://site.gctu.edu.gh/undergraduate-admission-requirement",
-        "https://site.gctu.edu.gh/",
-        "https://site.gctu.edu.gh/admissions-office",
-        "https://site.gctu.edu.gh/how-to-apply",
-        "https://site.gctu.edu.gh/admission-policy",
-        "https://site.gctu.edu.gh/undergraduate-programmes",
-        "https://gs.gctu.edu.gh/academics/masters-programmes/",
+        # IT and Computer Science programmes
+        "https://gs.gctu.edu.gh/academics/undergraduate-programmes/computer-science/",
+        "https://gs.gctu.edu.gh/academics/undergraduate-programmes/information-technology/",
+        "https://gs.gctu.edu.gh/academics/masters-programmes/computer-science/",
+        "https://gs.gctu.edu.gh/academics/masters-programmes/information-technology/",
+        "https://gs.gctu.edu.gh/academics/phd-programmes/computer-science/",
+        "https://gs.gctu.edu.gh/academics/phd-programmes/information-technology/",
+        # Faculty and research
+        "https://gs.gctu.edu.gh/faculty/",
+        "https://gs.gctu.edu.gh/research/",
+        "https://gs.gctu.edu.gh/departments/computer-science/",
+        "https://gs.gctu.edu.gh/departments/information-technology/",
+        # Administration for basic info like vice chancellor
         "https://site.gctu.edu.gh/gtuc/administration/about-gtuc/",
         "https://site.gctu.edu.gh/gtuc/administration/organogram/",
         "https://site.gctu.edu.gh/gtuc/administration/gtuc-history/",
         "https://site.gctu.edu.gh/gtuc/administration/our-mission/",
-        "https://site.gctu.edu.gh/gtuc/administration/gtuc-anthem/",
-        "https://site.gctu.edu.gh/partners-and-affiliates",
         "https://site.gctu.edu.gh/category/staff/council-members",
-        "https://gs.gctu.edu.gh/",
-        "https://gs.gctu.edu.gh/academics/phd-programmes/",
+        "https://site.gctu.edu.gh/gtuc/administration/vice-chancellor/",
+        # General IT support and admissions
+        "https://site.gctu.edu.gh/undergraduate-admission-requirement",
+        "https://site.gctu.edu.gh/admissions-office",
+        "https://site.gctu.edu.gh/how-to-apply",
+        "https://site.gctu.edu.gh/academic-calendar/",
+        "https://site.gctu.edu.gh/it-support/",
+        "https://site.gctu.edu.gh/student-services/",
     ]
     for url in urls:
         print(f"Processing URL: {url}")
