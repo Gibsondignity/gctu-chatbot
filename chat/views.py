@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 from django.http import JsonResponse
-from .models import Chat
+from .models import Chat, Conversation
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from .forms import RegisterForm
@@ -60,8 +60,8 @@ def register_view(request):
 
 @login_required
 def index(request):
-    chats = Chat.objects.filter(user=request.user).order_by('-created_at')[:10]
-    return render(request, 'index.html', {'chats': chats})
+    conversations = Conversation.objects.filter(user=request.user).order_by('-updated_at')[:10]
+    return render(request, 'index.html', {'conversations': conversations})
 
 
 
@@ -70,6 +70,7 @@ def response(request):
     if request.method == "POST":
         body = json.loads(request.body)
         user_question = body.get("message")
+        conversation_id = body.get("conversation_id")
         if not user_question:
             return JsonResponse({"error": "No message provided"}, status=400)
 
@@ -77,18 +78,49 @@ def response(request):
 
         # Save to database
         if request.user.is_authenticated:
-            Chat.objects.create(user=request.user, message=user_question, response=answer)
+            if conversation_id:
+                try:
+                    conversation = Conversation.objects.get(id=conversation_id, user=request.user)
+                except Conversation.DoesNotExist:
+                    return JsonResponse({"error": "Conversation not found"}, status=404)
+            else:
+                # Create new conversation
+                conversation = Conversation.objects.create(
+                    user=request.user,
+                    title=user_question[:50] + "..." if len(user_question) > 50 else user_question
+                )
 
-        return JsonResponse({"response": answer})
+            # Save the chat message
+            Chat.objects.create(
+                conversation=conversation,
+                message=user_question,
+                response=answer
+            )
+
+            # Update conversation timestamp
+            conversation.save()
+
+        return JsonResponse({
+            "response": answer,
+            "conversation_id": str(conversation.id) if 'conversation' in locals() else None
+        })
     
 
 @csrf_exempt
 @login_required
 def fetch_chats(request):
+    conversation_id = request.GET.get("conversation_id")
     page_number = int(request.GET.get("page", 1))
     page_size = 10  # Number of messages per scroll load
 
-    chats = Chat.objects.filter(user=request.user).order_by("created_at")
+    if conversation_id:
+        chats = Chat.objects.filter(
+            conversation_id=conversation_id,
+            conversation__user=request.user
+        ).order_by("created_at")
+    else:
+        chats = Chat.objects.filter(conversation__user=request.user).order_by("-created_at")[:page_size]
+
     paginator = Paginator(chats, page_size)
     page = paginator.get_page(page_number)
 
@@ -100,3 +132,18 @@ def fetch_chats(request):
         "chats": data,
         "has_next": page.has_next()
     })
+
+@login_required
+def get_conversations(request):
+    conversations = Conversation.objects.filter(user=request.user).order_by('-updated_at')
+    print("Printing conversation: ", conversations)
+    data = [
+        {
+            "id": str(conv.id),
+            "title": conv.title,
+            "created_at": conv.created_at.isoformat(),
+            "updated_at": conv.updated_at.isoformat()
+        }
+        for conv in conversations
+    ]
+    return JsonResponse({"conversations": data})
