@@ -8,12 +8,17 @@ VISITED = set()
 MAX_DEPTH = 2
 
 def is_valid(url):
-    # Stay within site.gctu.edu.gh and ignore certain paths
+    # Stay within site.gctu.edu.gh and ignore certain paths, focus on IT department
     parsed = urlparse(url)
     domain = tldextract.extract(parsed.netloc).domain
+    path = parsed.path.lower()
+    # Focus on IT-related paths: computer science, information technology, etc.
+    it_keywords = ["it", "computer", "information", "technology", "cs", "ict", "software", "engineering"]
+    is_it_related = any(keyword in path for keyword in it_keywords)
     return (
         "gctu" in domain and
-        all(x not in url for x in ["#", "mailto:", ".pdf", "/wp-login", "/contact", "javascript:"])
+        all(x not in url for x in ["#", "mailto:", ".pdf", "/wp-login", "/contact", "javascript:"]) and
+        (is_it_related or "gs.gctu.edu.gh" in url)  # Include graduate school which has IT programmes
     )
 
 def crawl(url, depth=0):
