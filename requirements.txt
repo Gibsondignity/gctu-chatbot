@@ -25,7 +25,9 @@ filelock==3.18.0
 flatbuffers==25.2.10
 fsspec==2025.3.2
 google-auth==2.40.1
+google_search_results==2.4.2
 googleapis-common-protos==1.70.0
+groq==0.31.1
 grpcio==1.71.0
 h11==0.14.0
 hf-xet==1.1.2
